@@ -36,8 +36,8 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 	urlStorage.Urls[shortLink] = res
 
 	w.WriteHeader(http.StatusCreated)
-
-	_, err = w.Write([]byte(shortLink))
+	host := r.Host
+	_, err = w.Write([]byte("http://" + host + "/" + shortLink))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
