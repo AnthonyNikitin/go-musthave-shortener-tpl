@@ -1,11 +1,11 @@
 package storage
 
-type UrlStorage struct {
+type URLStorage struct {
 	Urls map[string]string
 }
 
-func NewUrlStorage() *UrlStorage {
-	return &UrlStorage{
+func NewURLStorage() *URLStorage {
+	return &URLStorage{
 		Urls: make(map[string]string),
 	}
 }

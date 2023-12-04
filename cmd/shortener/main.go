@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-var urlStorage = storage.NewUrlStorage()
+var urlStorage = storage.NewURLStorage()
 
 func main() {
 	r := chi.NewRouter()
