@@ -2,17 +2,23 @@ package hasher
 
 import (
 	"crypto/sha256"
+	"errors"
 	"fmt"
 	"github.com/itchyny/base58-go"
 	"math/big"
 	"os"
 )
 
-func GetShortLink(input string) string {
+func GetShortLink(input string) (string, error) {
+
+	if len(input) == 0 {
+		return "", errors.New("input should not be empty")
+	}
+
 	urlHashBytes := sha256Of(input)
 	generatedNumber := new(big.Int).SetBytes(urlHashBytes).Uint64()
 	finalString := base58Encoded([]byte(fmt.Sprintf("%d", generatedNumber)))
-	return finalString[:8]
+	return finalString[:8], nil
 }
 
 func sha256Of(input string) []byte {

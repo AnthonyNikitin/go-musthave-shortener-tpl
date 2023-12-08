@@ -9,28 +9,36 @@ import (
 )
 
 type URLShortenerHandler struct {
-	URLStorage *storage.URLStorage
+	UrlRepository storage.URLRepository
 }
 
 func NewURLShortenerHandler() *URLShortenerHandler {
 	return &URLShortenerHandler{
-		URLStorage: storage.NewURLStorage(),
+		UrlRepository: storage.NewURLStorage(),
 	}
 }
 
 func (handler *URLShortenerHandler) PostHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
-	if err != nil {
+
+	w.Header().Set("Content-Type", "text/plain")
+
+	if err != nil || len(body) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	res := string(body)
-	shortLink := hasher.GetShortLink(res)
-	handler.URLStorage.Urls[shortLink] = res
+	shortLink, err := hasher.GetShortLink(res)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
+	handler.UrlRepository.AddURL(shortLink, res)
 
 	w.WriteHeader(http.StatusCreated)
 	host := r.Host
+
 	_, err = w.Write([]byte("http://" + host + "/" + shortLink))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -40,7 +48,9 @@ func (handler *URLShortenerHandler) PostHandler(w http.ResponseWriter, r *http.R
 func (handler *URLShortenerHandler) GetHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
-	url, ok := handler.URLStorage.Urls[id]
+	url, ok := handler.UrlRepository.GetURL(id)
+
+	w.Header().Set("Content-Type", "text/plain")
 
 	if !ok {
 		w.WriteHeader(http.StatusBadRequest)
