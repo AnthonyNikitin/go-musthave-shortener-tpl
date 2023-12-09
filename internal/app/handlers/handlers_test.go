@@ -66,10 +66,10 @@ func TestURLShortenerHandler_PostHandler1(t *testing.T) {
 			handler.PostHandler(w, r)
 
 			res := w.Result()
+			defer res.Body.Close()
 			resBody, err := io.ReadAll(res.Body)
 
 			str := string(resBody)
-			err = res.Body.Close()
 
 			require.NoError(t, err)
 			assert.Equal(t, test.want.code, res.StatusCode)
