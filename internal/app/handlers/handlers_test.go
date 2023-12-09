@@ -145,6 +145,7 @@ func TestURLShortenerHandler_GetHandler(t *testing.T) {
 			handler.GetHandler(w, r)
 
 			res := w.Result()
+			defer res.Body.Close()
 
 			assert.Equal(t, test.want.code, res.StatusCode)
 			assert.Equal(t, test.want.contentType, res.Header.Get("Content-Type"))
