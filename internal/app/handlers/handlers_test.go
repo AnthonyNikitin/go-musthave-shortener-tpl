@@ -136,7 +136,7 @@ func TestURLShortenerHandler_GetHandler(t *testing.T) {
 			}
 
 			w := httptest.NewRecorder()
-			r := httptest.NewRequest(http.MethodGet, "/{id}", nil)
+			r := httptest.NewRequest(http.MethodGet, "/{id}", http.NoBody)
 
 			routeContext := chi.NewRouteContext()
 			routeContext.URLParams.Add("id", test.fields.target)
