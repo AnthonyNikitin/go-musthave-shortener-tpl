@@ -59,23 +59,18 @@ func TestURLShortenerHandler_PostHandler1(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			handler := &URLShortenerHandler{
-				UrlRepository: test.fields.URLRepository,
+				URLRepository: test.fields.URLRepository,
 			}
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodPost, test.fields.target, bytes.NewReader([]byte(test.fields.url)))
 			handler.PostHandler(w, r)
 
 			res := w.Result()
-
-			defer func(Body io.ReadCloser) {
-				err := Body.Close()
-				if err != nil {
-					panic(err)
-				}
-			}(res.Body)
 			resBody, err := io.ReadAll(res.Body)
 
 			str := string(resBody)
+			err = res.Body.Close()
+
 			require.NoError(t, err)
 			assert.Equal(t, test.want.code, res.StatusCode)
 			assert.Equal(t, test.want.body, str)
@@ -133,11 +128,11 @@ func TestURLShortenerHandler_GetHandler(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			handler := &URLShortenerHandler{
-				UrlRepository: test.fields.URLRepository,
+				URLRepository: test.fields.URLRepository,
 			}
 
 			if test.fields.store {
-				handler.UrlRepository.AddURL(test.fields.target, test.fields.url)
+				handler.URLRepository.AddURL(test.fields.target, test.fields.url)
 			}
 
 			w := httptest.NewRecorder()

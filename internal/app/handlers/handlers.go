@@ -9,12 +9,12 @@ import (
 )
 
 type URLShortenerHandler struct {
-	UrlRepository storage.URLRepository
+	URLRepository storage.URLRepository
 }
 
 func NewURLShortenerHandler() *URLShortenerHandler {
 	return &URLShortenerHandler{
-		UrlRepository: storage.NewURLStorage(),
+		URLRepository: storage.NewURLStorage(),
 	}
 }
 
@@ -34,7 +34,7 @@ func (handler *URLShortenerHandler) PostHandler(w http.ResponseWriter, r *http.R
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	handler.UrlRepository.AddURL(shortLink, res)
+	handler.URLRepository.AddURL(shortLink, res)
 
 	w.WriteHeader(http.StatusCreated)
 	host := r.Host
@@ -48,7 +48,7 @@ func (handler *URLShortenerHandler) PostHandler(w http.ResponseWriter, r *http.R
 func (handler *URLShortenerHandler) GetHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
-	url, ok := handler.UrlRepository.GetURL(id)
+	url, ok := handler.URLRepository.GetURL(id)
 
 	w.Header().Set("Content-Type", "text/plain")
 
