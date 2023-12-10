@@ -14,7 +14,7 @@ type Configuration struct {
 func NewConfiguration() *Configuration {
 	return &Configuration{
 		Address:         "localhost:8080",
-		BaseResponseURL: "https://locslhost:8080",
+		BaseResponseURL: "https://localhost:8080/",
 	}
 }
 
