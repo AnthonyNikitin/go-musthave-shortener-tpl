@@ -59,7 +59,8 @@ func TestURLShortenerHandler_PostHandler1(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			handler := &URLShortenerHandler{
-				URLRepository: test.fields.URLRepository,
+				URLRepository:   test.fields.URLRepository,
+				BaseResponseURL: "http://example.com/",
 			}
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodPost, test.fields.target, bytes.NewReader([]byte(test.fields.url)))
@@ -128,7 +129,8 @@ func TestURLShortenerHandler_GetHandler(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			handler := &URLShortenerHandler{
-				URLRepository: test.fields.URLRepository,
+				URLRepository:   test.fields.URLRepository,
+				BaseResponseURL: "http://example.com/",
 			}
 
 			if test.fields.store {
