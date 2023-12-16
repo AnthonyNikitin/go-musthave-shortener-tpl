@@ -27,14 +27,14 @@ func NewConfiguration() *Configuration {
 
 func (configuration *Configuration) ParseConfiguration() {
 
+	httpPrefix := "http://"
+	httpsPrefix := "https://"
+
 	flag.Func("a", "the address where the application will start", func(s string) error {
 		_, err := url.ParseRequestURI(s)
 		if err != nil {
 			return err
 		}
-
-		httpPrefix := "http://"
-		httpsPrefix := "https://"
 
 		configuration.Address = cutPrefixes(s, httpPrefix, httpsPrefix)
 
@@ -47,7 +47,7 @@ func (configuration *Configuration) ParseConfiguration() {
 			return err
 		}
 
-		configuration.BaseResponseURL = cutSuffixes(s, "/")
+		configuration.BaseResponseURL = setSuffixes(s, "/")
 
 		return nil
 	})
@@ -61,11 +61,11 @@ func (configuration *Configuration) ParseConfiguration() {
 	}
 
 	if len(cfg.ServerAddress) > 0 {
-		configuration.Address = cfg.ServerAddress
+		configuration.Address = cutPrefixes(cfg.ServerAddress, httpPrefix, httpsPrefix)
 	}
 
 	if len(cfg.BaseURL) > 0 {
-		configuration.BaseResponseURL = cfg.BaseURL
+		configuration.BaseResponseURL = setSuffixes(cfg.BaseURL, "/")
 	}
 }
 
@@ -79,7 +79,7 @@ func cutPrefixes(s string, prefixes ...string) string {
 	return s
 }
 
-func cutSuffixes(s string, suffixes ...string) string {
+func setSuffixes(s string, suffixes ...string) string {
 	for _, suffix := range suffixes {
 		if !strings.HasSuffix(s, suffix) {
 			return s + "/"
