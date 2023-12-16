@@ -2,6 +2,8 @@ package config
 
 import (
 	"flag"
+	"fmt"
+	"github.com/caarlos0/env/v10"
 	"net/url"
 	"strings"
 )
@@ -9,6 +11,11 @@ import (
 type Configuration struct {
 	Address         string
 	BaseResponseURL string
+}
+
+type EnvConfiguration struct {
+	ServerAddress string `env:"SERVER_ADDRESS"`
+	BaseURL       string `env:"BASE_URL"`
 }
 
 func NewConfiguration() *Configuration {
@@ -46,6 +53,20 @@ func (configuration *Configuration) ParseConfiguration() {
 	})
 
 	flag.Parse()
+
+	cfg := EnvConfiguration{}
+	if err := env.Parse(&cfg); err != nil {
+		fmt.Printf("%+v\n", err)
+		return
+	}
+
+	if len(cfg.ServerAddress) > 0 {
+		configuration.Address = cfg.ServerAddress
+	}
+
+	if len(cfg.BaseURL) > 0 {
+		configuration.BaseResponseURL = cfg.BaseURL
+	}
 }
 
 func cutPrefixes(s string, prefixes ...string) string {
