@@ -9,19 +9,19 @@ import (
 )
 
 func RunApplication() error {
-	configuration := config.NewConfiguration()
-	configuration.ParseConfiguration()
+	c := config.NewConfiguration()
+	c.ParseConfiguration()
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.AllowContentType("text/plain"))
 
-	urlShortenerHandler := handlers.NewURLShortenerHandler(configuration.BaseResponseURL)
+	urlShortenerHandler := handlers.NewURLShortenerHandler(c.BaseResponseURL)
 
 	r.Post("/", urlShortenerHandler.PostHandler)
 	r.Get("/{id}", urlShortenerHandler.GetHandler)
 
-	err := http.ListenAndServe(configuration.Address, r)
+	err := http.ListenAndServe(c.Address, r)
 	if err != nil {
 		return err
 	}

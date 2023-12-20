@@ -25,7 +25,7 @@ func NewConfiguration() *Configuration {
 	}
 }
 
-func (configuration *Configuration) ParseConfiguration() {
+func (c *Configuration) ParseConfiguration() {
 
 	httpPrefix := "http://"
 	httpsPrefix := "https://"
@@ -36,7 +36,7 @@ func (configuration *Configuration) ParseConfiguration() {
 			return err
 		}
 
-		configuration.Address = cutPrefixes(s, httpPrefix, httpsPrefix)
+		c.Address = cutPrefixes(s, httpPrefix, httpsPrefix)
 
 		return nil
 	})
@@ -47,7 +47,7 @@ func (configuration *Configuration) ParseConfiguration() {
 			return err
 		}
 
-		configuration.BaseResponseURL = setSuffixes(s, "/")
+		c.BaseResponseURL = setSuffixes(s, "/")
 
 		return nil
 	})
@@ -61,11 +61,11 @@ func (configuration *Configuration) ParseConfiguration() {
 	}
 
 	if len(cfg.ServerAddress) > 0 {
-		configuration.Address = cutPrefixes(cfg.ServerAddress, httpPrefix, httpsPrefix)
+		c.Address = cutPrefixes(cfg.ServerAddress, httpPrefix, httpsPrefix)
 	}
 
 	if len(cfg.BaseURL) > 0 {
-		configuration.BaseResponseURL = setSuffixes(cfg.BaseURL, "/")
+		c.BaseResponseURL = setSuffixes(cfg.BaseURL, "/")
 	}
 }
 

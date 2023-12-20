@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/AnthonyNikitin/go-musthave-shortener-tpl/internal/app/hasher"
 	"github.com/AnthonyNikitin/go-musthave-shortener-tpl/internal/app/storage"
 	"github.com/go-chi/chi/v5"
@@ -34,6 +35,8 @@ func (handler *URLShortenerHandler) PostHandler(w http.ResponseWriter, r *http.R
 	shortLink, err := hasher.GetShortLink(res)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		fmt.Println(err.Error())
+		return
 	}
 
 	handler.URLRepository.AddURL(shortLink, res)
@@ -42,6 +45,7 @@ func (handler *URLShortenerHandler) PostHandler(w http.ResponseWriter, r *http.R
 
 	_, err = w.Write([]byte(handler.BaseResponseURL + shortLink))
 	if err != nil {
+		fmt.Println(err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 	}
 }

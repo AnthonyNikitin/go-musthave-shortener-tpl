@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/itchyny/base58-go"
 	"math/big"
-	"os"
 )
 
 func GetShortLink(input string) (string, error) {
@@ -17,7 +16,10 @@ func GetShortLink(input string) (string, error) {
 
 	urlHashBytes := sha256Of(input)
 	generatedNumber := new(big.Int).SetBytes(urlHashBytes).Uint64()
-	finalString := base58Encoded([]byte(fmt.Sprintf("%d", generatedNumber)))
+	finalString, err := base58Encoded([]byte(fmt.Sprintf("%d", generatedNumber)))
+	if err != nil {
+		return "", err
+	}
 	return finalString[:8], nil
 }
 
@@ -27,12 +29,13 @@ func sha256Of(input string) []byte {
 	return algorithm.Sum(nil)
 }
 
-func base58Encoded(bytes []byte) string {
+func base58Encoded(bytes []byte) (string, error) {
 	encoding := base58.BitcoinEncoding
 	encoded, err := encoding.Encode(bytes)
 	if err != nil {
 		fmt.Println(err.Error())
-		os.Exit(1)
+		return "", err
 	}
-	return string(encoded)
+
+	return string(encoded), nil
 }
