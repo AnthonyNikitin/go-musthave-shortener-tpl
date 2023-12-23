@@ -3,6 +3,7 @@ package runner
 import (
 	"github.com/AnthonyNikitin/go-musthave-shortener-tpl/internal/app/config"
 	"github.com/AnthonyNikitin/go-musthave-shortener-tpl/internal/app/handlers"
+	"github.com/AnthonyNikitin/go-musthave-shortener-tpl/internal/app/middlewares"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"net/http"
@@ -13,7 +14,7 @@ func RunApplication() error {
 	c.ParseConfiguration()
 
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
+	r.Use(middlewares.LoggingMiddleware)
 	r.Use(middleware.AllowContentType("text/plain"))
 
 	urlShortenerHandler := handlers.NewURLShortenerHandler(c.BaseResponseURL)
