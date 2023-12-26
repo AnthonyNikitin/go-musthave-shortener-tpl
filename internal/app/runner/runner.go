@@ -15,12 +15,16 @@ func RunApplication() error {
 
 	r := chi.NewRouter()
 	r.Use(middlewares.LoggingMiddleware)
-	r.Use(middleware.AllowContentType("text/plain"))
+	r.Use(middleware.AllowContentType("text/plain", "application/json"))
 
 	urlShortenerHandler := handlers.NewURLShortenerHandler(c.BaseResponseURL)
 
 	r.Post("/", urlShortenerHandler.PostHandler)
 	r.Get("/{id}", urlShortenerHandler.GetHandler)
+
+	r.Route("/api", func(r chi.Router) {
+		r.Post("/shorten", urlShortenerHandler.PostShortenHandler)
+	})
 
 	err := http.ListenAndServe(c.Address, r)
 	if err != nil {
