@@ -52,7 +52,7 @@ func (handler *URLShortenerHandler) PostHandler(w http.ResponseWriter, r *http.R
 }
 
 type ShortenRequest struct {
-	Url string `json:"url"`
+	URL string `json:"url"`
 }
 
 type ShortenResponse struct {
@@ -75,20 +75,20 @@ func (handler *URLShortenerHandler) PostShortenHandler(w http.ResponseWriter, r 
 		return
 	}
 
-	if len(request.Url) == 0 {
+	if len(request.URL) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Println("empty request url")
 		return
 	}
 
-	shortLink, err := hasher.GetShortLink(request.Url)
+	shortLink, err := hasher.GetShortLink(request.URL)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Println(err.Error())
 		return
 	}
 
-	handler.URLRepository.AddURL(shortLink, request.Url)
+	handler.URLRepository.AddURL(shortLink, request.URL)
 	result := handler.BaseResponseURL + shortLink
 	response := ShortenResponse{
 		Result: result,

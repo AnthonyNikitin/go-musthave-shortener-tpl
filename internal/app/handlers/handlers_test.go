@@ -179,7 +179,7 @@ func TestURLShortenerHandler_PostShortenHandler(t *testing.T) {
 				URLRepository: storage.NewURLStorage(),
 				target:        "/api/shorten",
 				shortenRequest: ShortenRequest{
-					Url: "https://practicum.yandex.ru/",
+					URL: "https://practicum.yandex.ru/",
 				},
 			},
 			want: want{
@@ -196,7 +196,7 @@ func TestURLShortenerHandler_PostShortenHandler(t *testing.T) {
 				URLRepository: storage.NewURLStorage(),
 				target:        "/api/shorten",
 				shortenRequest: ShortenRequest{
-					Url: "",
+					URL: "",
 				},
 			},
 			want: want{
@@ -217,12 +217,15 @@ func TestURLShortenerHandler_PostShortenHandler(t *testing.T) {
 			w := httptest.NewRecorder()
 
 			body, err := json.Marshal(test.fields.shortenRequest)
+			require.NoError(t, err)
+
 			r := httptest.NewRequest(http.MethodPost, test.fields.target, bytes.NewReader(body))
 			handler.PostShortenHandler(w, r)
 
 			res := w.Result()
 			defer res.Body.Close()
 			resBody, err := io.ReadAll(res.Body)
+			require.NoError(t, err)
 
 			if len(resBody) > 0 {
 				var shortenResponse ShortenResponse
