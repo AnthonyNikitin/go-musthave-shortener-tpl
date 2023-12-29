@@ -1,8 +1,8 @@
 package middlewares
 
 import (
+	"github.com/AnthonyNikitin/go-musthave-shortener-tpl/internal/app/readers"
 	"github.com/AnthonyNikitin/go-musthave-shortener-tpl/internal/app/writers"
-	"github.com/AnthonyNikitin/go-musthave-shortener-tpl/internal/readers"
 	"net/http"
 	"strings"
 )
