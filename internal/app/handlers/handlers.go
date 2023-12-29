@@ -101,7 +101,7 @@ func (handler *URLShortenerHandler) PostShortenHandler(w http.ResponseWriter, r 
 		return
 	}
 
-	w.Header().Set("content-type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	_, err = w.Write(output)
 	if err != nil {
