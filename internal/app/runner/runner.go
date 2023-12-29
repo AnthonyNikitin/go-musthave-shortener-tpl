@@ -15,6 +15,7 @@ func RunApplication() error {
 
 	r := chi.NewRouter()
 	r.Use(middlewares.LoggingMiddleware)
+	r.Use(middlewares.GzipMiddleware)
 	r.Use(middleware.AllowContentType("text/plain", "application/json"))
 
 	urlShortenerHandler := handlers.NewURLShortenerHandler(c.BaseResponseURL)
