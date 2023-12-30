@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 	"sync"
 )
 
@@ -30,7 +29,7 @@ func NewURLStorage(fileStoragePath string) (*URLStorage, error) {
 
 	urls := make(map[string]string)
 	if len(fileStoragePath) != 0 {
-		fileStoragePath = strings.TrimPrefix(fileStoragePath, "/")
+		//fileStoragePath = strings.TrimPrefix(fileStoragePath, "/")
 
 		fileStorage, err := createFileStorage(fileStoragePath)
 		defer func(fileStorage *os.File) {
