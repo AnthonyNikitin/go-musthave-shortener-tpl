@@ -29,8 +29,6 @@ func NewURLStorage(fileStoragePath string) (*URLStorage, error) {
 
 	urls := make(map[string]string)
 	if len(fileStoragePath) != 0 {
-		//fileStoragePath = strings.TrimPrefix(fileStoragePath, "/")
-
 		fileStorage, err := createFileStorage(fileStoragePath)
 		defer func(fileStorage *os.File) {
 			err = fileStorage.Close()
