@@ -11,17 +11,20 @@ import (
 type Configuration struct {
 	Address         string
 	BaseResponseURL string
+	FileStoragePath string
 }
 
 type EnvConfiguration struct {
-	ServerAddress string `env:"SERVER_ADDRESS"`
-	BaseURL       string `env:"BASE_URL"`
+	ServerAddress   string `env:"SERVER_ADDRESS"`
+	BaseURL         string `env:"BASE_URL"`
+	FileStoragePath string `env:"FILE_STORAGE_PATH"`
 }
 
 func NewConfiguration() *Configuration {
 	return &Configuration{
 		Address:         "localhost:8080",
 		BaseResponseURL: "http://localhost:8080/",
+		FileStoragePath: "/tmp/short-url-db.json",
 	}
 }
 
@@ -52,6 +55,18 @@ func (c *Configuration) ParseConfiguration() {
 		return nil
 	})
 
+	flag.Func("f", "ull name of the file where the data is saved in JSON format", func(s string) error {
+
+		// empty value disables the disk write feature
+		if len(s) == 0 {
+			c.FileStoragePath = ""
+			return nil
+		}
+
+		c.FileStoragePath = s
+		return nil
+	})
+
 	flag.Parse()
 
 	cfg := EnvConfiguration{}
@@ -66,6 +81,10 @@ func (c *Configuration) ParseConfiguration() {
 
 	if len(cfg.BaseURL) > 0 {
 		c.BaseResponseURL = setSuffixes(cfg.BaseURL, "/")
+	}
+
+	if len(cfg.FileStoragePath) > 0 {
+		c.FileStoragePath = cfg.FileStoragePath
 	}
 }
 

@@ -16,16 +16,16 @@ import (
 
 func TestURLShortenerHandler_PostHandler(t *testing.T) {
 	type fields struct {
-		URLRepository storage.URLRepository
-		target        string
-		url           string
+		fileStoragePath string
+		target          string
+		url             string
 	}
 	type want struct {
 		code        int
 		body        string
 		contentType string
 	}
-	tests := []struct {
+	var tests = []struct {
 		name   string
 		fields fields
 		want   want
@@ -33,9 +33,9 @@ func TestURLShortenerHandler_PostHandler(t *testing.T) {
 		{
 			name: "positive test",
 			fields: fields{
-				URLRepository: storage.NewURLStorage(),
-				target:        "/",
-				url:           "https://practicum.yandex.ru/",
+				fileStoragePath: "",
+				target:          "/",
+				url:             "https://practicum.yandex.ru/",
 			},
 			want: want{
 				code:        http.StatusCreated,
@@ -46,9 +46,9 @@ func TestURLShortenerHandler_PostHandler(t *testing.T) {
 		{
 			name: "negative test",
 			fields: fields{
-				URLRepository: storage.NewURLStorage(),
-				target:        "/",
-				url:           "",
+				fileStoragePath: "",
+				target:          "/",
+				url:             "",
 			},
 			want: want{
 				code:        http.StatusBadRequest,
@@ -59,8 +59,10 @@ func TestURLShortenerHandler_PostHandler(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+
+			urlStorage, _ := storage.NewURLStorage(test.fields.fileStoragePath)
 			handler := &URLShortenerHandler{
-				URLRepository:   test.fields.URLRepository,
+				URLRepository:   urlStorage,
 				BaseResponseURL: "http://localhost:8080/",
 			}
 			w := httptest.NewRecorder()
@@ -83,10 +85,10 @@ func TestURLShortenerHandler_PostHandler(t *testing.T) {
 
 func TestURLShortenerHandler_GetHandler(t *testing.T) {
 	type fields struct {
-		URLRepository storage.URLRepository
-		target        string
-		url           string
-		store         bool
+		fileStoragePath string
+		target          string
+		url             string
+		store           bool
 	}
 	type want struct {
 		code        int
@@ -101,10 +103,10 @@ func TestURLShortenerHandler_GetHandler(t *testing.T) {
 		{
 			name: "positive test",
 			fields: fields{
-				URLRepository: storage.NewURLStorage(),
-				target:        "CKj87ajs",
-				url:           "https://practicum.yandex.ru/",
-				store:         true,
+				fileStoragePath: "",
+				target:          "CKj87ajs",
+				url:             "https://practicum.yandex.ru/",
+				store:           true,
 			},
 			want: want{
 				code:        http.StatusTemporaryRedirect,
@@ -113,12 +115,12 @@ func TestURLShortenerHandler_GetHandler(t *testing.T) {
 			},
 		},
 		{
-			name: "negwtive test",
+			name: "negative test",
 			fields: fields{
-				URLRepository: storage.NewURLStorage(),
-				target:        "CKj87ajs",
-				url:           "https://practicum.yandex.ru/",
-				store:         false,
+				fileStoragePath: "",
+				target:          "CKj87ajs",
+				url:             "https://practicum.yandex.ru/",
+				store:           false,
 			},
 			want: want{
 				code:        http.StatusBadRequest,
@@ -129,13 +131,15 @@ func TestURLShortenerHandler_GetHandler(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+
+			urlStorage, _ := storage.NewURLStorage(test.fields.fileStoragePath)
 			handler := &URLShortenerHandler{
-				URLRepository:   test.fields.URLRepository,
+				URLRepository:   urlStorage,
 				BaseResponseURL: "http://localhost:8080/",
 			}
 
 			if test.fields.store {
-				handler.URLRepository.AddURL(test.fields.target, test.fields.url)
+				_ = handler.URLRepository.AddURL(test.fields.target, test.fields.url)
 			}
 
 			w := httptest.NewRecorder()
@@ -159,9 +163,9 @@ func TestURLShortenerHandler_GetHandler(t *testing.T) {
 
 func TestURLShortenerHandler_PostShortenHandler(t *testing.T) {
 	type fields struct {
-		URLRepository  storage.URLRepository
-		target         string
-		shortenRequest ShortenRequest
+		fileStoragePath string
+		target          string
+		shortenRequest  ShortenRequest
 	}
 	type want struct {
 		code            int
@@ -176,8 +180,8 @@ func TestURLShortenerHandler_PostShortenHandler(t *testing.T) {
 		{
 			name: "positive test",
 			fields: fields{
-				URLRepository: storage.NewURLStorage(),
-				target:        "/api/shorten",
+				fileStoragePath: "",
+				target:          "/api/shorten",
 				shortenRequest: ShortenRequest{
 					URL: "https://practicum.yandex.ru/",
 				},
@@ -193,8 +197,8 @@ func TestURLShortenerHandler_PostShortenHandler(t *testing.T) {
 		{
 			name: "negative test",
 			fields: fields{
-				URLRepository: storage.NewURLStorage(),
-				target:        "/api/shorten",
+				fileStoragePath: "",
+				target:          "/api/shorten",
 				shortenRequest: ShortenRequest{
 					URL: "",
 				},
@@ -209,8 +213,9 @@ func TestURLShortenerHandler_PostShortenHandler(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			urlStorage, _ := storage.NewURLStorage(test.fields.fileStoragePath)
 			handler := &URLShortenerHandler{
-				URLRepository:   test.fields.URLRepository,
+				URLRepository:   urlStorage,
 				BaseResponseURL: "http://localhost:8080/",
 			}
 

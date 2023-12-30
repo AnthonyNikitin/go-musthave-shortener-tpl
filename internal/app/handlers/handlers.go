@@ -15,11 +15,17 @@ type URLShortenerHandler struct {
 	BaseResponseURL string
 }
 
-func NewURLShortenerHandler(baseResponseURL string) *URLShortenerHandler {
-	return &URLShortenerHandler{
-		URLRepository:   storage.NewURLStorage(),
-		BaseResponseURL: baseResponseURL,
+func NewURLShortenerHandler(baseResponseURL, fileStoragePath string) (*URLShortenerHandler, error) {
+
+	urlRepository, err := storage.NewURLStorage(fileStoragePath)
+	if err != nil {
+		return nil, err
 	}
+
+	return &URLShortenerHandler{
+		URLRepository:   urlRepository,
+		BaseResponseURL: baseResponseURL,
+	}, nil
 }
 
 func (handler *URLShortenerHandler) PostHandler(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +46,11 @@ func (handler *URLShortenerHandler) PostHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	handler.URLRepository.AddURL(shortLink, res)
+	err = handler.URLRepository.AddURL(shortLink, res)
+	if err != nil {
+		fmt.Println(err.Error())
+		w.WriteHeader(http.StatusBadRequest)
+	}
 
 	w.WriteHeader(http.StatusCreated)
 
@@ -88,7 +98,12 @@ func (handler *URLShortenerHandler) PostShortenHandler(w http.ResponseWriter, r 
 		return
 	}
 
-	handler.URLRepository.AddURL(shortLink, request.URL)
+	err = handler.URLRepository.AddURL(shortLink, request.URL)
+	if err != nil {
+		fmt.Println(err.Error())
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
 	result := handler.BaseResponseURL + shortLink
 	response := ShortenResponse{
 		Result: result,

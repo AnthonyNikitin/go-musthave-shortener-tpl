@@ -9,6 +9,7 @@ import (
 )
 
 func RunApplication() error {
+
 	c := config.NewConfiguration()
 	c.ParseConfiguration()
 
@@ -16,7 +17,11 @@ func RunApplication() error {
 	r.Use(middlewares.LoggingMiddleware)
 	r.Use(middlewares.GzipMiddleware)
 
-	urlShortenerHandler := handlers.NewURLShortenerHandler(c.BaseResponseURL)
+	urlShortenerHandler, err := handlers.NewURLShortenerHandler(c.BaseResponseURL, c.FileStoragePath)
+
+	if err != nil {
+		panic(err)
+	}
 
 	r.Post("/", urlShortenerHandler.PostHandler)
 	r.Get("/{id}", urlShortenerHandler.GetHandler)
@@ -25,7 +30,7 @@ func RunApplication() error {
 		r.Post("/shorten", urlShortenerHandler.PostShortenHandler)
 	})
 
-	err := http.ListenAndServe(c.Address, r)
+	err = http.ListenAndServe(c.Address, r)
 	if err != nil {
 		return err
 	}
