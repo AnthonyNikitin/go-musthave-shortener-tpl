@@ -30,12 +30,13 @@ func NewURLStorage(fileStoragePath string) (*URLStorage, error) {
 
 	urls := make(map[string]string)
 	if len(fileStoragePath) != 0 {
-		if strings.HasPrefix(fileStoragePath, "/") {
-			fileStoragePath = fileStoragePath[1:]
-		}
+		fileStoragePath = strings.TrimPrefix(fileStoragePath, "/")
 
 		fileStorage, err := createFileStorage(fileStoragePath)
-		defer fileStorage.Close()
+		defer func(fileStorage *os.File) {
+			err = fileStorage.Close()
+		}(fileStorage)
+
 		if err != nil {
 			return nil, err
 		}
