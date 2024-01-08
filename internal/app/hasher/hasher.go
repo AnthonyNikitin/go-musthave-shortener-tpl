@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
+	"github.com/AnthonyNikitin/go-musthave-shortener-tpl/internal/app/logging"
 	"github.com/itchyny/base58-go"
 	"math/big"
 )
@@ -32,8 +33,10 @@ func sha256Of(input string) []byte {
 func base58Encoded(bytes []byte) (string, error) {
 	encoding := base58.BitcoinEncoding
 	encoded, err := encoding.Encode(bytes)
+
+	logger := logging.NewLogger()
 	if err != nil {
-		fmt.Println(err.Error())
+		logger.Error(err.Error())
 		return "", err
 	}
 
