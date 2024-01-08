@@ -61,7 +61,6 @@ func (handler *URLShortenerHandler) PostHandler(w http.ResponseWriter, r *http.R
 	if err != nil {
 		logger.Error(err.Error())
 		w.WriteHeader(http.StatusBadRequest)
-		return
 	}
 }
 
