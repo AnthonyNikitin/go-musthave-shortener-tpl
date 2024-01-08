@@ -52,6 +52,7 @@ func (handler *URLShortenerHandler) PostHandler(w http.ResponseWriter, r *http.R
 	if err != nil {
 		logger.Error(err.Error())
 		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
@@ -60,6 +61,7 @@ func (handler *URLShortenerHandler) PostHandler(w http.ResponseWriter, r *http.R
 	if err != nil {
 		logger.Error(err.Error())
 		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 }
 
@@ -106,6 +108,7 @@ func (handler *URLShortenerHandler) PostShortenHandler(w http.ResponseWriter, r 
 	if err != nil {
 		logger.Error(err.Error())
 		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	result := handler.BaseResponseURL + shortLink
